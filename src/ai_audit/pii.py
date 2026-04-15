@@ -26,7 +26,7 @@ import hashlib
 import re
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Match
+from re import Match
 
 
 class PiiType(Enum):

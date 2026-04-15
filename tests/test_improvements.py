@@ -5,7 +5,6 @@
 - all new symbols in public API
 """
 
-import asyncio
 
 import nacl.signing
 import pytest
@@ -21,7 +20,6 @@ from ai_audit import (
     ahash_output,
     ahash_state,
     canonicalize_input,
-    get_verify_key_hex,
     hash_json,
     hash_output,
     hash_state,

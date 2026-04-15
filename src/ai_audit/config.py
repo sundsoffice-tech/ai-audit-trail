@@ -14,7 +14,7 @@ Usage::
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
@@ -36,7 +36,7 @@ class AuditConfig:
     receipt_max_size: int = 50_000
 
     @classmethod
-    def from_env(cls) -> "AuditConfig":
+    def from_env(cls) -> AuditConfig:
         """Convenience factory: read common config from environment variables.
 
         Variables:

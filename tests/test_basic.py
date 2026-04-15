@@ -66,7 +66,7 @@ def test_canonicalize_input():
 
 def test_compliance_summary():
     store = ReceiptStore()
-    for i in range(30):  # 30 all-ALLOW receipts → SPRT converges to CERTIFIED
+    for _i in range(30):  # 30 all-ALLOW receipts → SPRT converges to CERTIFIED
         c = ReceiptCollector(tenant_id="test")
         c.set_action(ReceiptAction.ALLOW)
         c.emit(store)
@@ -82,9 +82,10 @@ def test_no_hacca_imports():
     """Ensure no HACCA internal imports leak into the package."""
     import importlib
     import pkgutil
+
     import ai_audit
 
-    for importer, modname, _ in pkgutil.walk_packages(
+    for _importer, modname, _ in pkgutil.walk_packages(
         path=ai_audit.__path__,
         prefix="ai_audit.",
     ):

@@ -28,8 +28,6 @@ Quick start::
 """
 
 from ai_audit.collector import ReceiptCollector, get_current_collector
-from ai_audit.pii import PiiConfig, PiiMode, PiiType, aobfuscate_text, obfuscate_text
-from ai_audit.report import ArticleScore, AuditReport, ComplianceReportGenerator
 from ai_audit.config import AuditConfig
 from ai_audit.dashboard import ComplianceSummary, build_compliance_summary
 from ai_audit.hashing import (
@@ -50,7 +48,9 @@ from ai_audit.keys import (
     reset_signing_key,
 )
 from ai_audit.models import CheckRecord, DecisionReceipt, ReceiptAction
+from ai_audit.pii import PiiConfig, PiiMode, PiiType, aobfuscate_text, obfuscate_text
 from ai_audit.receipt_store import ReceiptStore
+from ai_audit.report import ArticleScore, AuditReport, ComplianceReportGenerator
 from ai_audit.verifier import VerificationResult, verify_chain
 
 __version__ = "0.1.0"

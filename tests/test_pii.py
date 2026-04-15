@@ -1,6 +1,5 @@
 """Tests for ai_audit.pii — PII-Redaction module."""
 
-import asyncio
 
 import pytest
 
@@ -11,7 +10,6 @@ from ai_audit.pii import (
     aobfuscate_text,
     obfuscate_text,
 )
-
 
 # ---------------------------------------------------------------------------
 # REDACT mode
@@ -85,8 +83,9 @@ def test_mask_mode_keeps_first_last_char():
 
 def test_mask_mode_short_string():
     """Short matches (<=2 chars) are fully masked."""
-    from ai_audit.pii import _apply_obfuscation
     import re
+
+    from ai_audit.pii import _apply_obfuscation
     match = re.match(r"ab", "ab")
     assert match is not None
     result = _apply_obfuscation(match, PiiType.EMAIL, PiiMode.MASK)

@@ -2,11 +2,8 @@
 
 import json
 
-import pytest
-
-from ai_audit import AuditConfig, init_audit_config, reset_signing_key
 from ai_audit.dashboard import ComplianceSummary
-from ai_audit.report import ArticleScore, AuditReport, ComplianceReportGenerator
+from ai_audit.report import ComplianceReportGenerator
 
 
 def _certified_summary(receipts: int = 500) -> ComplianceSummary:
