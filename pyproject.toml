@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "ai-audit"
+name = "ai-audit-trail"
 version = "0.1.0"
 description = "Tamper-evident AI pipeline audit trail — EU AI Act Art. 12 compliant Decision Receipts"
 readme = "README.md"
@@ -52,9 +52,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/sundsoffice-tech/ai-audit"
-Repository = "https://github.com/sundsoffice-tech/ai-audit"
-Issues = "https://github.com/sundsoffice-tech/ai-audit/issues"
+Homepage = "https://github.com/sundsoffice-tech/ai-audit-trail"
+Repository = "https://github.com/sundsoffice-tech/ai-audit-trail"
+Issues = "https://github.com/sundsoffice-tech/ai-audit-trail/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ai_audit"]
