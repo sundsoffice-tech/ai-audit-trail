@@ -3,7 +3,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/ai-audit.svg)](https://pypi.org/project/ai-audit/)
 [![Python](https://img.shields.io/pypi/pyversions/ai-audit.svg)](https://pypi.org/project/ai-audit/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://img.shields.io/badge/tests-67%20passing-brightgreen.svg)](https://github.com/sundsoffice-tech/ai-audit)
+[![CI](https://github.com/sundsoffice-tech/ai-audit/actions/workflows/ci.yml/badge.svg)](https://github.com/sundsoffice-tech/ai-audit/actions/workflows/ci.yml)
 [![EU AI Act](https://img.shields.io/badge/EU%20AI%20Act-Art.%209%2C%2012%2C%2013%2C%2017%2C%2018-blue.svg)](https://artificialintelligenceact.eu/)
 
 > **The only standalone Python library that makes your AI pipeline EU AI Act compliant — cryptographically provable, no blockchain, no SaaS, no lock-in.**
