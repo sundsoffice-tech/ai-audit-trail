@@ -1,0 +1,75 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ai-audit"
+version = "0.1.0"
+description = "Tamper-evident AI pipeline audit trail — EU AI Act Art. 12 compliant Decision Receipts"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+authors = [
+    { name = "HACCA", email = "sunds.connect@gmail.com" },
+]
+keywords = [
+    "audit",
+    "ai",
+    "eu-ai-act",
+    "compliance",
+    "cryptography",
+    "ed25519",
+    "hash-chain",
+    "decision-receipt",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security :: Cryptography",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+dependencies = [
+    "pydantic>=2.0",
+    "PyNaCl>=1.5",
+    "orjson>=3.9",
+]
+
+[project.optional-dependencies]
+redis = ["redis>=5.0"]
+prometheus = ["prometheus-client>=0.19"]
+all = ["redis>=5.0", "prometheus-client>=0.19"]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.4",
+    "mypy>=1.10",
+]
+
+[project.urls]
+Homepage = "https://github.com/hacca/ai-audit"
+Repository = "https://github.com/hacca/ai-audit"
+Issues = "https://github.com/hacca/ai-audit/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ai_audit"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
