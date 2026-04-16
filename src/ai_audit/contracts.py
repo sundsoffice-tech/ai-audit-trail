@@ -224,6 +224,7 @@ class ContractMonitor:
         if violated:
             self._last_violation_step = self._total
             self._consecutive_clean = 0
+            self._recovery_k = 0  # Reset recovery distance on new violation
         else:
             self._consecutive_clean += 1
             if self._last_violation_step > 0:

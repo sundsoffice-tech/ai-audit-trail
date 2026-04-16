@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ai-audit-trail"
-version = "0.3.0"
+version = "0.3.1"
 description = "Tamper-evident AI pipeline audit trail — EU AI Act Art. 12 compliant Decision Receipts"
 readme = "README.md"
 license = { text = "MIT" }

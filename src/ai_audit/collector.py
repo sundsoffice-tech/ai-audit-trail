@@ -21,6 +21,7 @@ Usage::
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from contextvars import ContextVar
 from typing import Any
@@ -171,14 +172,19 @@ class ReceiptCollector:
 
         self._receipt.checks = self._checks
 
-        # Hash-chain linkage
-        self._receipt.prev_receipt_hash = store.get_chain_tip(self._receipt.tenant_id)
+        # Atomic seal + append (prevents TOCTOU race on chain tip)
+        store.atomic_seal_and_append(self._receipt, get_signing_key())
 
-        # Ed25519 seal (SHA-256 hash + signature)
-        self._receipt.seal(get_signing_key())
-
-        # Append to store (in-memory + fire-and-forget Redis)
-        store.append(self._receipt)
+        # Fire-and-forget Redis persistence (if configured)
+        if store._redis is not None:
+            try:
+                asyncio.get_running_loop()
+                if store._use_lua and store._lua_script is not None:
+                    asyncio.create_task(store._lua_redis_commit(self._receipt))
+                else:
+                    asyncio.create_task(store._atomic_redis_commit(self._receipt))
+            except RuntimeError:
+                pass  # No event-loop (sync tests / CLI) — skip Redis
 
         logger.debug(
             "Receipt emitted: %s action=%s checks=%d",

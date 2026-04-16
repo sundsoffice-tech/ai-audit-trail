@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import threading
 from collections import OrderedDict
 from typing import Any
 
@@ -116,6 +117,15 @@ class ReceiptStore:
         self._chain_tips: dict[str, str] = {}
         self._session_index: dict[str, set[str]] = {}
         self._trace_index: dict[str, set[str]] = {}
+        self._tenant_locks: dict[str, threading.Lock] = {}
+        self._locks_lock = threading.Lock()  # Protects _tenant_locks dict itself
+
+    def _get_tenant_lock(self, tenant_id: str) -> threading.Lock:
+        """Get or create a per-tenant lock (thread-safe)."""
+        with self._locks_lock:
+            if tenant_id not in self._tenant_locks:
+                self._tenant_locks[tenant_id] = threading.Lock()
+            return self._tenant_locks[tenant_id]
 
     def get_chain_tip(self, tenant_id: str) -> str:
         """Return the receipt_hash of the latest receipt for this tenant (memory-only)."""
@@ -123,6 +133,26 @@ class ReceiptStore:
         if tip_id and tip_id in self._receipts:
             return self._receipts[tip_id].receipt_hash
         return ""
+
+    def atomic_seal_and_append(
+        self,
+        receipt: DecisionReceipt,
+        signing_key: Any,
+    ) -> None:
+        """Atomically read chain tip, seal receipt, and append — no TOCTOU race.
+
+        This method holds a per-tenant lock across the entire sequence,
+        preventing concurrent emitters from forking the hash-chain.
+
+        Parameters:
+            receipt:     The receipt to seal and store.
+            signing_key: Ed25519 ``nacl.signing.SigningKey``.
+        """
+        lock = self._get_tenant_lock(receipt.tenant_id)
+        with lock:
+            receipt.prev_receipt_hash = self.get_chain_tip(receipt.tenant_id)
+            receipt.seal(signing_key)
+            self._store_in_memory(receipt)
 
     async def aget_chain_tip(self, tenant_id: str) -> str:
         """Return the receipt_hash of the latest receipt, with Redis fallback.

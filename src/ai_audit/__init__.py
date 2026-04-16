@@ -59,6 +59,7 @@ from ai_audit.keys import (
 )
 from ai_audit.models import CheckRecord, DecisionReceipt, ReceiptAction
 from ai_audit.pii import PiiConfig, PiiMode, PiiType, aobfuscate_text, obfuscate_text
+from ai_audit.provenance import ProvenanceChain, ProvenanceRecord, SourceType, TrustSummary
 from ai_audit.receipt_store import ReceiptStore
 from ai_audit.report import ArticleScore, AuditReport, ComplianceReportGenerator
 from ai_audit.sprt import SPRTMonitor, SPRTState
@@ -156,4 +157,9 @@ __all__ = [
     # Multi-Agent Trace-Graphs
     "TraceGraph",
     "TraceNode",
+    # Epistemische Integrität / Provenance
+    "ProvenanceChain",
+    "ProvenanceRecord",
+    "SourceType",
+    "TrustSummary",
 ]
