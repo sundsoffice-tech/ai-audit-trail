@@ -106,7 +106,7 @@ def verify_chain(
                 failed_receipt_id=receipt.receipt_id,
                 details=[detail],
             )
-        except Exception as e:
+        except (ValueError, nacl.exceptions.CryptoError) as e:
             detail["signature"] = f"error: {e}"
             return VerificationResult(
                 valid=False,

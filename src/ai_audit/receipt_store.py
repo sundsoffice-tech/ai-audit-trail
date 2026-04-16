@@ -26,6 +26,25 @@ from ai_audit.models import DecisionReceipt
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
+# Optional Redis exception handling — safe when redis is not installed.
+# ---------------------------------------------------------------------------
+try:
+    import redis as _redis_mod
+
+    REDIS_CONNECTION_ERRORS: tuple[type[BaseException], ...] = (
+        _redis_mod.exceptions.ConnectionError,
+        _redis_mod.exceptions.ResponseError,
+        AttributeError,
+    )
+    REDIS_RUNTIME_ERRORS: tuple[type[BaseException], ...] = (
+        _redis_mod.exceptions.RedisError,
+        OSError,
+    )
+except ImportError:
+    REDIS_CONNECTION_ERRORS = (AttributeError,)
+    REDIS_RUNTIME_ERRORS = (OSError,)
+
+# ---------------------------------------------------------------------------
 # Lua script — NB 005c5140
 # Atomically appends a receipt: updates chain tip + indices in one roundtrip.
 # ---------------------------------------------------------------------------
@@ -60,11 +79,14 @@ class ReceiptStore:
     """Append-only store for Decision Receipts with optional Redis persistence.
 
     Parameters:
-        redis_client:  Optional sync Redis client (``redis.Redis``).
-        ttl:           Redis key TTL in seconds (default: 30 days).
-        max_size:      Max in-memory receipts before LRU eviction.
-        use_lua:       Use server-side Lua script instead of MULTI/EXEC.
-                       Recommended for high-throughput deployments (>1k req/s).
+        redis_client:       Optional sync Redis client (``redis.Redis``).
+        ttl:                Redis key TTL in seconds (default: 30 days).
+        max_size:           Max in-memory receipts before LRU eviction.
+        use_lua:            Use server-side Lua script instead of MULTI/EXEC.
+                            Recommended for high-throughput deployments (>1k req/s).
+        fail_on_redis_error: If ``True`` (default), Redis write failures propagate
+                            as exceptions — the audited operation must abort.
+                            If ``False``, failures are logged but swallowed (best-effort).
     """
 
     def __init__(
@@ -73,18 +95,20 @@ class ReceiptStore:
         ttl: int = 2_592_000,
         max_size: int = 50_000,
         use_lua: bool = False,
+        fail_on_redis_error: bool = True,
     ) -> None:
         self._redis = redis_client
         self._ttl = ttl
         self._max_size = max_size
         self._use_lua = use_lua
+        self._fail_on_redis_error = fail_on_redis_error
         self._lua_script: Any | None = None
 
         if redis_client is not None and use_lua:
             try:
                 self._lua_script = redis_client.register_script(_LUA_APPEND_SCRIPT)
                 logger.info("Redis Lua script registered (use_lua=True)")
-            except Exception as e:
+            except REDIS_CONNECTION_ERRORS as e:
                 logger.warning("Could not register Lua script, falling back to MULTI/EXEC: %s", e)
                 self._use_lua = False
 
@@ -153,7 +177,9 @@ class ReceiptStore:
                 f"receipt:{receipt.tenant_id}:{receipt.receipt_id}",
                 self._ttl,
             )
-        except Exception as e:
+        except REDIS_RUNTIME_ERRORS as e:
+            if self._fail_on_redis_error:
+                raise
             logger.warning("Receipt Lua commit failed (best-effort): %s", e)
 
     async def _atomic_redis_commit(self, receipt: DecisionReceipt) -> None:
@@ -172,7 +198,9 @@ class ReceiptStore:
                 pipe.sadd(f"receipt_trace:{receipt.trace_id}", receipt.receipt_id)
 
             await asyncio.to_thread(pipe.execute)
-        except Exception as e:
+        except REDIS_RUNTIME_ERRORS as e:
+            if self._fail_on_redis_error:
+                raise
             logger.warning("Receipt Redis commit failed (best-effort): %s", e)
 
     # ------------------------------------------------------------------

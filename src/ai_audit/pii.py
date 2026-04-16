@@ -23,11 +23,14 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import logging
 import re
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from functools import partial
 from re import Match
+
+logger = logging.getLogger(__name__)
 
 
 class PiiType(Enum):
@@ -152,8 +155,8 @@ def obfuscate_text(text: str, config: PiiConfig) -> str:
                     lambda m: _apply_obfuscation(m, PiiType.CUSTOM, config.mode),
                     result,
                 )
-            except re.error:
-                pass  # Ignore malformed patterns silently
+            except re.error as e:
+                logger.warning("Invalid PII custom pattern %r: %s", raw_pattern, e)
 
     return result
 

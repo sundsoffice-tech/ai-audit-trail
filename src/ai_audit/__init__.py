@@ -27,6 +27,9 @@ Quick start::
     assert result.valid
 """
 
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _pkg_version
+
 from ai_audit.collector import ReceiptCollector, get_current_collector
 from ai_audit.config import AuditConfig
 from ai_audit.dashboard import ComplianceSummary, build_compliance_summary
@@ -53,7 +56,10 @@ from ai_audit.receipt_store import ReceiptStore
 from ai_audit.report import ArticleScore, AuditReport, ComplianceReportGenerator
 from ai_audit.verifier import VerificationResult, verify_chain
 
-__version__ = "0.1.0"
+try:
+    __version__ = _pkg_version("ai-audit-trail")
+except PackageNotFoundError:
+    __version__ = "unknown"
 
 __all__ = [
     # Config
