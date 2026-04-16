@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ai-audit-trail"
-version = "0.1.1"
+version = "0.1.2"
 description = "Tamper-evident AI pipeline audit trail — EU AI Act Art. 12 compliant Decision Receipts"
 readme = "README.md"
 license = { text = "MIT" }
@@ -69,6 +69,10 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.mypy]
 python_version = "3.11"
 strict = true
+
+[[tool.mypy.overrides]]
+module = "redis.*"
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

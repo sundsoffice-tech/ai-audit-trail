@@ -75,7 +75,10 @@ def verify_chain(
         ``VerificationResult`` with ``valid=True`` if all checks pass.
     """
     if not receipts:
-        return VerificationResult(valid=True, total_receipts=0, verified_receipts=0)
+        return VerificationResult(
+            valid=False, total_receipts=0, verified_receipts=0,
+            error="No receipts to verify",
+        )
 
     verify_key = nacl.signing.VerifyKey(bytes.fromhex(public_key_hex))
     receipts_sorted = sorted(receipts, key=lambda r: r.timestamp)

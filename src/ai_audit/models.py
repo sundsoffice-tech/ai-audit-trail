@@ -120,6 +120,7 @@ class DecisionReceipt(BaseModel):
         2. Sign canonical payload with Ed25519 (libsodium C implementation).
         3. Store both on the receipt instance.
         """
-        self.receipt_hash = self.compute_hash()
-        signed = private_key.sign(self.seal_payload())
+        payload = self.seal_payload()
+        self.receipt_hash = hashlib.sha256(payload).hexdigest()
+        signed = private_key.sign(payload)
         self.signature = signed.signature.hex()

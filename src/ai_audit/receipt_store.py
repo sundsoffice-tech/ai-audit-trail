@@ -118,14 +118,35 @@ class ReceiptStore:
         self._trace_index: dict[str, set[str]] = {}
 
     def get_chain_tip(self, tenant_id: str) -> str:
-        """Return the receipt_hash of the latest receipt for this tenant."""
+        """Return the receipt_hash of the latest receipt for this tenant (memory-only)."""
         tip_id = self._chain_tips.get(tenant_id)
         if tip_id and tip_id in self._receipts:
             return self._receipts[tip_id].receipt_hash
         return ""
 
-    def append(self, receipt: DecisionReceipt) -> None:
-        """Store a sealed receipt (in-memory + fire-and-forget Redis)."""
+    async def aget_chain_tip(self, tenant_id: str) -> str:
+        """Return the receipt_hash of the latest receipt, with Redis fallback.
+
+        After LRU eviction or process restart the in-memory tip is gone.
+        This method falls back to ``GET receipt_chain:{tenant_id}`` in Redis
+        so the hash-chain remains unbroken.
+        """
+        tip_id = self._chain_tips.get(tenant_id)
+        if tip_id and tip_id in self._receipts:
+            return self._receipts[tip_id].receipt_hash
+        if self._redis is not None:
+            try:
+                tip_hash = await asyncio.to_thread(
+                    self._redis.get, f"receipt_chain:{tenant_id}"
+                )
+                if tip_hash:
+                    return tip_hash.decode() if isinstance(tip_hash, bytes) else tip_hash
+            except REDIS_RUNTIME_ERRORS:
+                pass
+        return ""
+
+    def _store_in_memory(self, receipt: DecisionReceipt) -> None:
+        """In-memory storage + index updates (shared by append/aappend)."""
         while len(self._receipts) >= self._max_size:
             evicted_id, _ = self._receipts.popitem(last=False)
             logger.debug("Receipt LRU eviction: %s", evicted_id)
@@ -138,6 +159,13 @@ class ReceiptStore:
         if receipt.trace_id:
             self._trace_index.setdefault(receipt.trace_id, set()).add(receipt.receipt_id)
 
+    def append(self, receipt: DecisionReceipt) -> None:
+        """Store a sealed receipt (in-memory + fire-and-forget Redis).
+
+        For guaranteed Redis persistence, use :meth:`aappend` instead.
+        """
+        self._store_in_memory(receipt)
+
         if self._redis is not None:
             try:
                 asyncio.get_running_loop()
@@ -147,6 +175,21 @@ class ReceiptStore:
                     asyncio.create_task(self._atomic_redis_commit(receipt))
             except RuntimeError:
                 pass  # No event-loop (sync tests / CLI) — skip Redis
+
+    async def aappend(self, receipt: DecisionReceipt) -> None:
+        """Store a sealed receipt with awaited Redis persistence.
+
+        Unlike :meth:`append`, this method ``await``\\s the Redis write so
+        that ``fail_on_redis_error=True`` actually propagates exceptions
+        to the caller.
+        """
+        self._store_in_memory(receipt)
+
+        if self._redis is not None:
+            if self._use_lua and self._lua_script is not None:
+                await self._lua_redis_commit(receipt)
+            else:
+                await self._atomic_redis_commit(receipt)
 
     async def _lua_redis_commit(self, receipt: DecisionReceipt) -> None:
         """Single-roundtrip Lua commit — no connection-pool exhaustion."""

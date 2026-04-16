@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import abc
 import logging
+import threading
 
 import nacl.signing
 
@@ -80,26 +81,28 @@ class DefaultKeyProvider(KeyProvider):
     def __init__(self, config: AuditConfig) -> None:
         self._config = config
         self._key: nacl.signing.SigningKey | None = None
+        self._lock = threading.Lock()
 
     def _load(self) -> nacl.signing.SigningKey:
-        if self._key is None:
-            if self._config.signing_key_hex:
-                self._key = nacl.signing.SigningKey(bytes.fromhex(self._config.signing_key_hex))
-                logger.info("Ed25519 signing key loaded from AuditConfig")
-            else:
-                if self._config.is_production:
-                    raise RuntimeError(
-                        "No signing key set in production mode. "
-                        "Provide AuditConfig(signing_key_hex=...) or a custom KeyProvider. "
-                        'Generate: python -c "import nacl.signing; '
-                        'print(nacl.signing.SigningKey.generate().encode().hex())"'
+        with self._lock:
+            if self._key is None:
+                if self._config.signing_key_hex:
+                    self._key = nacl.signing.SigningKey(bytes.fromhex(self._config.signing_key_hex))
+                    logger.info("Ed25519 signing key loaded from AuditConfig")
+                else:
+                    if self._config.is_production:
+                        raise RuntimeError(
+                            "No signing key set in production mode. "
+                            "Provide AuditConfig(signing_key_hex=...) or a custom KeyProvider. "
+                            'Generate: python -c "import nacl.signing; '
+                            'print(nacl.signing.SigningKey.generate().encode().hex())"'
+                        )
+                    self._key = nacl.signing.SigningKey.generate()
+                    logger.warning(
+                        "No signing key configured — using ephemeral Ed25519 key. "
+                        "Set AuditConfig(signing_key_hex=...) for production use."
                     )
-                self._key = nacl.signing.SigningKey.generate()
-                logger.warning(
-                    "No signing key configured — using ephemeral Ed25519 key. "
-                    "Set AuditConfig(signing_key_hex=...) for production use."
-                )
-        return self._key
+            return self._key
 
     def get_signing_key(self) -> nacl.signing.SigningKey:
         return self._load()

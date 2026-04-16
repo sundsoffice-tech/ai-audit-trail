@@ -166,6 +166,57 @@ def test_inserted_receipt_detected():
     assert "chain" in result.error.lower() or "signature" in result.error.lower() or "hash" in result.error.lower()
 
 
+def test_verify_empty_chain_returns_false():
+    """verify_chain([]) must return valid=False (fail-closed, not fail-open)."""
+    result = verify_chain([], get_verify_key_hex())
+    assert not result.valid
+    assert result.total_receipts == 0
+    assert "no receipts" in result.error.lower()
+
+
+def test_chain_tip_after_lru_eviction():
+    """Chain tip must survive LRU eviction via aget_chain_tip Redis fallback.
+
+    Without Redis, the sync get_chain_tip returns "" after eviction.
+    This test verifies the in-memory eviction behaviour.
+    """
+    store = ReceiptStore(max_size=2)
+    ids = []
+    for i in range(3):
+        c = ReceiptCollector(trace_id=f"t{i}", tenant_id="acme")
+        c.set_input(f"query {i}")
+        c.set_output(f"answer {i}")
+        c.set_action(ReceiptAction.ALLOW)
+        rid = c.emit(store)
+        ids.append(rid)
+        c.cleanup()
+
+    # After 3 inserts with max_size=2, oldest receipt was evicted
+    assert store.count == 2
+    assert store.get(ids[0]) is None  # evicted
+    # Chain tip still works because tip_id points to latest receipt
+    tip = store.get_chain_tip("acme")
+    assert tip != ""
+
+
+def test_seal_payload_cached():
+    """seal() must use the same payload bytes for hash and signature (ToCToU fix)."""
+    store = ReceiptStore()
+    c = ReceiptCollector(trace_id="t1", tenant_id="acme")
+    c.set_input("test")
+    c.set_output("result")
+    c.set_action(ReceiptAction.ALLOW)
+    rid = c.emit(store)
+    c.cleanup()
+
+    r = store.get(rid)
+    assert r is not None
+    # Verify that hash matches seal_payload
+    import hashlib
+    expected_hash = hashlib.sha256(r.seal_payload()).hexdigest()
+    assert r.receipt_hash == expected_hash
+
+
 def test_no_hacca_imports():
     """Ensure no HACCA internal imports leak into the package."""
     import importlib
