@@ -31,6 +31,7 @@ from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _pkg_version
 
 from ai_audit.batch import BatchSeal, MerkleBatcher, merkle_root, verify_inclusion
+from ai_audit.buffer import AuditBuffer, AuditBufferFullError
 from ai_audit.collector import ReceiptCollector, get_current_collector
 from ai_audit.config import AuditConfig
 from ai_audit.crosswalk import ComplianceCrosswalk, ControlStatus, build_crosswalk, nist_function_map
@@ -60,6 +61,7 @@ from ai_audit.pii import PiiConfig, PiiMode, PiiType, aobfuscate_text, obfuscate
 from ai_audit.receipt_store import ReceiptStore
 from ai_audit.report import ArticleScore, AuditReport, ComplianceReportGenerator
 from ai_audit.sprt import SPRTMonitor, SPRTState
+from ai_audit.storage import InMemoryBackend, StorageBackend
 from ai_audit.verifier import VerificationResult, verify_chain
 
 try:
@@ -133,4 +135,10 @@ __all__ = [
     # Drift Detection
     "DriftMonitor",
     "DriftState",
+    # Storage ABCs
+    "StorageBackend",
+    "InMemoryBackend",
+    # Ring-Buffer
+    "AuditBuffer",
+    "AuditBufferFullError",
 ]
