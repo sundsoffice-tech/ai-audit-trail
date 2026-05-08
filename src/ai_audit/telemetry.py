@@ -63,8 +63,9 @@ def _ensure_initialised() -> None:
     try:
         from opentelemetry import metrics, trace
 
-        _meter = metrics.get_meter("ai_audit", "0.2.0")
-        _tracer = trace.get_tracer("ai_audit", "0.2.0")
+        # OTel public API; module has it at runtime but stubs vary by version.
+        _meter = metrics.get_meter("ai_audit", "0.2.0")  # type: ignore[attr-defined, unused-ignore]
+        _tracer = trace.get_tracer("ai_audit", "0.2.0")  # type: ignore[attr-defined, unused-ignore]
 
         _seal_histogram = _meter.create_histogram(
             name="ai_audit.seal_duration_seconds",

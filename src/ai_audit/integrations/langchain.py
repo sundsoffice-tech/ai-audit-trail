@@ -45,7 +45,7 @@ except ImportError as e:  # pragma: no cover
 logger = logging.getLogger(__name__)
 
 
-class AuditCallbackHandler(BaseCallbackHandler):  # type: ignore[misc]
+class AuditCallbackHandler(BaseCallbackHandler):  # type: ignore[misc, unused-ignore]
     """LangChain callback emitting one DecisionReceipt per LLM call.
 
     Parameters:

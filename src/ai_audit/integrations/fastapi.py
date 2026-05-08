@@ -50,7 +50,7 @@ except ImportError as e:  # pragma: no cover
 logger = logging.getLogger(__name__)
 
 
-class AuditMiddleware(BaseHTTPMiddleware):  # type: ignore[misc]
+class AuditMiddleware(BaseHTTPMiddleware):  # type: ignore[misc, unused-ignore]
     """Starlette/FastAPI middleware that emits one DecisionReceipt per request.
 
     Parameters:

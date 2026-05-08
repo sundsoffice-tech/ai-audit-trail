@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ai-audit-trail"
-version = "0.4.3"
+version = "0.4.4"
 description = "Cryptographically verifiable audit trail for AI systems — Ed25519 signed, hash-chained Decision Receipts with ISO 42001 / NIST AI RMF compliance mappings"
 readme = "README.md"
 license = { text = "MIT" }
@@ -65,6 +65,9 @@ postgres = ["asyncpg>=0.29"]
 s3 = ["boto3>=1.30"]
 vault = ["hvac>=2.0"]
 aws-kms = ["boto3>=1.30"]
+mcp = [
+    "mcp>=1.0",
+]
 all = [
     "redis>=5.0",
     "prometheus-client>=0.19",
@@ -78,6 +81,7 @@ all = [
     "asyncpg>=0.29",
     "boto3>=1.30",
     "hvac>=2.0",
+    "mcp>=1.0",
 ]
 dev = [
     "pytest>=8.0",
@@ -88,6 +92,7 @@ dev = [
 
 [project.scripts]
 ai-audit = "ai_audit.__main__:main"
+ai-audit-mcp = "ai_audit.mcp_server:main"
 
 [project.urls]
 Homepage = "https://github.com/sundsoffice-tech/ai-audit-trail"
@@ -128,6 +133,7 @@ module = [
     "boto3.*",
     "botocore.*",
     "hvac.*",
+    "mcp.*",
 ]
 ignore_missing_imports = true
 
