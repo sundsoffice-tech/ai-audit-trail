@@ -1,5 +1,7 @@
 # ai-audit-trail
 
+<!-- mcp-name: io.github.sundsoffice-tech/ai-audit-trail -->
+
 [![PyPI version](https://img.shields.io/pypi/v/ai-audit-trail.svg)](https://pypi.org/project/ai-audit-trail/)
 [![Python](https://img.shields.io/pypi/pyversions/ai-audit-trail.svg)](https://pypi.org/project/ai-audit-trail/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)

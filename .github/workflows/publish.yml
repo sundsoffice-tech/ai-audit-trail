@@ -79,3 +79,44 @@ jobs:
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         # No token needed — uses Trusted Publisher (OIDC)
+
+  mcp-registry:
+    # Publish the MCP server entry to registry.modelcontextprotocol.io
+    # AFTER the PyPI artefact is live — the registry verifies the package
+    # description on PyPI carries the `mcp-name: io.github.…/ai-audit-trail`
+    # marker, so the registry job must run last.
+    runs-on: ubuntu-latest
+    needs: [publish]
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set release version into server.json
+        # Strip the leading "v" from the tag and write it into both
+        # server.json top-level "version" and packages[0].version so the
+        # MCP Registry entry stays in lock-step with the PyPI release.
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          jq --arg v "$VERSION" '.version = $v | .packages[0].version = $v' \
+            server.json > server.tmp && mv server.tmp server.json
+          echo "Will publish MCP entry for version: $VERSION"
+          cat server.json
+
+      - name: Wait for PyPI to mirror the new version
+        # The registry validates that the version on PyPI carries the
+        # mcp-name marker. PyPI's CDN can lag by ~30s after a Trusted
+        # Publisher upload — give it time before mcp-publisher checks.
+        run: sleep 60
+
+      - name: Install mcp-publisher
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" \
+            | tar xz mcp-publisher
+
+      - name: Authenticate to MCP Registry (GitHub OIDC)
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish to MCP Registry
+        run: ./mcp-publisher publish

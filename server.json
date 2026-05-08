@@ -1,0 +1,23 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.sundsoffice-tech/ai-audit-trail",
+  "title": "ai-audit-trail",
+  "description": "Cryptographically verifiable audit trails for AI agent decisions. Ed25519-signed, hash-chained Decision Receipts with EU AI Act / ISO 42001 / NIST AI RMF compliance mappings. Read-only verification tools — agents cannot forge receipts.",
+  "repository": {
+    "url": "https://github.com/sundsoffice-tech/ai-audit-trail",
+    "source": "github"
+  },
+  "version": "0.4.6",
+  "websiteUrl": "https://sundsoffice-tech.github.io/ai-audit-trail/",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "ai-audit-trail",
+      "version": "0.4.6",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtimeHint": "ai-audit-mcp"
+    }
+  ]
+}

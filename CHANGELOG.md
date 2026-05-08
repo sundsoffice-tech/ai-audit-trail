@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.6] - 2026-05-09
+
+### Added — Official MCP Registry submission
+- `server.json` at repository root with the `io.github.sundsoffice-tech/ai-audit-trail`
+  identifier, PyPI registryType, and the `ai-audit-mcp` runtime hint.
+- `mcp-name: io.github.sundsoffice-tech/ai-audit-trail` HTML comment in `README.md`
+  — required ownership-verification marker the MCP Registry checks against the
+  PyPI package description.
+- New `mcp-registry` job in the publish workflow runs after the PyPI publish:
+  authenticates via GitHub OIDC (no secrets needed), installs `mcp-publisher`,
+  rewrites the version in `server.json` from the release tag, and submits the
+  entry to `registry.modelcontextprotocol.io`. Each release now ships an
+  updated MCP-Registry entry automatically.
+
 ## [0.4.5] - 2026-05-09
 
 ### Fixed
