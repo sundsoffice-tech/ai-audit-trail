@@ -10,3 +10,5 @@ build/
 .ruff_cache/
 findings.md
 ai_audit_*.md
+outreach/
+site/

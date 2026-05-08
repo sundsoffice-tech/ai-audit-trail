@@ -1,0 +1,69 @@
+site_name: ai-audit-trail
+site_description: Cryptographically verifiable audit trails for AI systems — Ed25519, hash-chained Decision Receipts with ISO 42001 / NIST AI RMF / EU AI Act mappings.
+site_url: https://sundsoffice-tech.github.io/ai-audit-trail/
+repo_url: https://github.com/sundsoffice-tech/ai-audit-trail
+repo_name: sundsoffice-tech/ai-audit-trail
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.expand
+    - search.highlight
+    - search.suggest
+    - search.share
+    - content.code.copy
+    - content.action.edit
+  icon:
+    repo: fontawesome/brands/github
+
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Concepts: concepts.md
+  - Integrations: integrations.md
+  - Compliance: compliance.md
+  - CLI: cli.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/sundsoffice-tech/ai-audit-trail
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/ai-audit-trail/
+
+copyright: MIT licensed. &copy; 2026 S&amp;S Connect.
