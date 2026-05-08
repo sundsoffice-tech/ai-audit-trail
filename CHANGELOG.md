@@ -7,7 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.4.0] - 2026-05-08
+## [0.4.1] - 2026-05-08
+
+### Fixed
+- `tests/test_basic.py::test_no_hacca_imports` was importing every submodule
+  in CI, which failed for `ai_audit.integrations.*`, `ai_audit.backends.*`,
+  and `ai_audit.kms.*` because their optional dependencies (fastapi,
+  langchain-core, asyncpg, hvac, …) are not installed in the publish-test
+  environment. The test now skips submodules whose optional deps are absent,
+  preserving the original "no HACCA leak" guarantee for the core package.
+
+### Note
+- v0.4.0 was tagged on GitHub but never published to PyPI (the publish
+  workflow's test job hit the issue above). v0.4.1 ships the v0.4.0 feature
+  set + the test fix.
+
+## [0.4.0] - 2026-05-08 — _GitHub-only, not on PyPI_
 
 ### Added — Drop-in Integrations
 - **`ai_audit.integrations.fastapi.AuditMiddleware`** — real Starlette/FastAPI

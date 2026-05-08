@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ai-audit-trail"
-version = "0.4.0"
+version = "0.4.1"
 description = "Cryptographically verifiable audit trail for AI systems — Ed25519 signed, hash-chained Decision Receipts with ISO 42001 / NIST AI RMF compliance mappings"
 readme = "README.md"
 license = { text = "MIT" }

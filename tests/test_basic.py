@@ -218,17 +218,34 @@ def test_seal_payload_cached():
 
 
 def test_no_hacca_imports():
-    """Ensure no HACCA internal imports leak into the package."""
+    """Ensure no HACCA internal imports leak into the package.
+
+    Submodules under integrations/, backends/, kms/ require optional dependencies
+    (fastapi, asyncpg, hvac, …) and intentionally raise ImportError at import time
+    when those are missing. Skip them — this test guards core-package purity.
+    """
     import importlib
     import pkgutil
 
     import ai_audit
 
+    optional_prefixes = (
+        "ai_audit.integrations.",
+        "ai_audit.backends.",
+        "ai_audit.kms.",
+    )
+
     for _importer, modname, _ in pkgutil.walk_packages(
         path=ai_audit.__path__,
         prefix="ai_audit.",
     ):
-        mod = importlib.import_module(modname)
+        if any(modname.startswith(p) for p in optional_prefixes):
+            try:
+                mod = importlib.import_module(modname)
+            except ImportError:
+                continue
+        else:
+            mod = importlib.import_module(modname)
         for attr in dir(mod):
             assert "packages." not in attr
             assert "apps." not in attr
