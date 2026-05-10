@@ -64,7 +64,7 @@ mcp = FastMCP("ai-audit-trail")
 # ---------------------------------------------------------------------------
 
 
-@mcp.tool()
+@mcp.tool()  # type: ignore[misc, unused-ignore]
 def verify_receipt(receipt_json: str, public_key_hex: str) -> dict[str, Any]:
     """Verify a single signed Decision Receipt against an Ed25519 public key.
 
@@ -95,7 +95,7 @@ def verify_receipt(receipt_json: str, public_key_hex: str) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-@mcp.tool()
+@mcp.tool()  # type: ignore[misc, unused-ignore]
 def verify_chain(receipts_jsonl: str, public_key_hex: str) -> dict[str, Any]:
     """Verify an ordered hash-chain of signed receipts.
 
@@ -142,7 +142,7 @@ def verify_chain(receipts_jsonl: str, public_key_hex: str) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-@mcp.tool()
+@mcp.tool()  # type: ignore[misc, unused-ignore]
 def verify_evidence_package(zip_b64: str) -> dict[str, Any]:
     """Verify a base64-encoded evidence-package ZIP bundle offline.
 
@@ -197,7 +197,7 @@ def verify_evidence_package(zip_b64: str) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-@mcp.tool()
+@mcp.tool()  # type: ignore[misc, unused-ignore]
 def compliance_summary(receipts_jsonl: str) -> dict[str, Any]:
     """Aggregate compliance metrics for a list of Decision Receipts.
 
@@ -241,7 +241,7 @@ def compliance_summary(receipts_jsonl: str) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-@mcp.tool()
+@mcp.tool()  # type: ignore[misc, unused-ignore]
 def list_compliance_controls(receipts_jsonl: str = "") -> dict[str, Any]:
     """List the compliance controls covered by ai-audit-trail's crosswalks.
 

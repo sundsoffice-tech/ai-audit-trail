@@ -180,7 +180,7 @@ class _AuditedCompletions:
         # plain dict shape because that's what most users (and the test suite)
         # construct. Cast at the SDK boundary.
         response = self._parent._client.chat.completions.create(
-            model=model, messages=messages, **kwargs  # type: ignore[arg-type]
+            model=model, messages=messages, **kwargs  # type: ignore[arg-type, unused-ignore]
         )
         try:
             emit_chat_completion_receipt(
