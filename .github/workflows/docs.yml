@@ -31,7 +31,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install mkdocs-material
-        run: pip install "mkdocs-material>=9.5" "mkdocs>=1.6"
+        run: pip install "mkdocs-material==9.8.1" "mkdocs==1.6.1"
 
       - name: Generate llms-full.txt from docs
         run: python scripts/build_llms_full.py

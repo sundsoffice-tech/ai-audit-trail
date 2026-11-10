@@ -35,7 +35,7 @@ Diese Website setzt keine Cookies. Sie verwendet keine Webanalyse und keine Stat
 
 Im lokalen Speicher Ihres Browsers (LocalStorage) legt die Website die Farbdarstellung (hell oder dunkel) ab, damit sie beim nächsten Aufruf gleich bleibt. Dieser Wert bleibt in Ihrem Browser und wird nicht an uns oder an Dritte übertragen.
 
-Die Suche läuft in Ihrem Browser. Der Suchindex wird von dieser Website geladen; Ihre Suchbegriffe werden nicht an einen Server gesendet.
+Die Suche läuft in Ihrem Browser; der Suchindex wird von dieser Website geladen. Öffnen Sie einen Treffer oder einen geteilten Suchverweis, steht der Suchbegriff in der aufgerufenen Adresse und wird wie jede Seitenadresse an GitHub übertragen.
 
 ## 4. Schriftarten
 
@@ -99,7 +99,7 @@ This website sets no cookies. It uses no web analytics and no statistics. There 
 
 The website stores the colour scheme (light or dark) in your browser's local storage so that it stays the same on your next visit. This value stays in your browser and is not transmitted to us or to third parties.
 
-The search runs in your browser. The search index is loaded from this website; your search terms are not sent to a server.
+The search runs in your browser; the search index is loaded from this website. If you open a result or a shared search link, the search term is part of the requested address and is transmitted to GitHub like any page address.
 
 ### 4. Fonts
 
