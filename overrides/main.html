@@ -1,0 +1,61 @@
+{#-
+  Additions to the page head. The layout itself is untouched.
+
+  - Start page title from extra.homepage_title (the theme would print only the
+    14 characters of site_name).
+  - Open Graph tags for link previews (no og:image: there is no preview image
+    yet).
+  - JSON-LD for search engines on the start page, built from mkdocs.yml.
+-#}
+{% extends "base.html" %}
+
+{% block htmltitle %}
+  {% if page and page.is_homepage and config.extra.homepage_title %}
+    <title>{{ config.extra.homepage_title }}</title>
+  {% else %}
+    {{ super() }}
+  {% endif %}
+{% endblock %}
+
+{% block extrahead %}
+  {% if page and page.is_homepage and config.extra.homepage_title %}
+    {% set og_title = config.extra.homepage_title %}
+  {% elif page and page.meta and page.meta.title %}
+    {% set og_title = page.meta.title ~ " - " ~ config.site_name %}
+  {% elif page and page.title %}
+    {% set og_title = (page.title | striptags) ~ " - " ~ config.site_name %}
+  {% else %}
+    {% set og_title = config.site_name %}
+  {% endif %}
+  {% if page and page.meta and page.meta.description %}
+    {% set og_description = page.meta.description %}
+  {% else %}
+    {% set og_description = config.site_description %}
+  {% endif %}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ config.site_name | e }}">
+  <meta property="og:title" content="{{ og_title | e }}">
+  <meta property="og:description" content="{{ og_description | e }}">
+  {% if page and page.canonical_url %}
+    <meta property="og:url" content="{{ page.canonical_url | e }}">
+  {% endif %}
+  <meta name="twitter:card" content="summary">
+  {% if page and page.is_homepage %}
+    {% set ld = {
+      "@context": "https://schema.org",
+      "@type": "SoftwareSourceCode",
+      "name": config.site_name,
+      "description": config.site_description,
+      "url": config.site_url,
+      "codeRepository": config.repo_url,
+      "programmingLanguage": "Python",
+      "license": "https://spdx.org/licenses/MIT.html",
+      "publisher": {
+        "@type": "Organization",
+        "name": config.extra.publisher.name,
+        "url": config.extra.publisher.url
+      }
+    } %}
+    <script type="application/ld+json">{{ ld | tojson }}</script>
+  {% endif %}
+{% endblock %}

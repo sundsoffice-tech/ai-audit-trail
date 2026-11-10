@@ -1,0 +1,5 @@
+/* Footer: the two legal links (Impressum, Datenschutz) sit in a line of plain
+   text of the same colour, so they get an underline to be recognisable as links. */
+.md-copyright__highlight a {
+  text-decoration: underline;
+}
