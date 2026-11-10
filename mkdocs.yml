@@ -7,6 +7,10 @@ edit_uri: edit/main/docs/
 
 theme:
   name: material
+  # Template overrides: no GitHub API call on page load (partials/source.html),
+  # search share link with a real target (partials/search.html), page title,
+  # Open Graph tags and JSON-LD (main.html).
+  custom_dir: overrides
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -45,6 +49,22 @@ nav:
   - Compliance: compliance.md
   - CLI: cli.md
 
+# Fonts (Roboto, Roboto Mono) are downloaded at build time and shipped with the
+# site, so a visitor's browser never contacts fonts.googleapis.com or
+# fonts.gstatic.com. The same goes for the two scripts the theme would load
+# from unpkg.com at runtime (Mermaid, ResizeObserver polyfill). `links: false`
+# keeps external links exactly as written. Listing `search` is required as
+# soon as `plugins` is set, otherwise the default search plugin is dropped.
+plugins:
+  - search
+  - privacy:
+      links: false
+      assets_expr_map:
+        .js: '["''](?P<url>(?:https?:)?//(?:[^"'']+\.(?:css|js(?:on)?)|unpkg\.com/resize-observer-polyfill))["'']'
+
+extra_css:
+  - stylesheets/extra.css
+
 markdown_extensions:
   - admonition
   - attr_list
@@ -60,6 +80,12 @@ markdown_extensions:
   - pymdownx.superfences
 
 extra:
+  # <title> and og:title of the start page (30 to 60 characters).
+  homepage_title: "ai-audit-trail: verifiable audit trails for AI systems"
+  # Publisher named in the JSON-LD block of the start page.
+  publisher:
+    name: S&S Connect GbR
+    url: https://sundsconnect.de/
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/sundsoffice-tech/ai-audit-trail
@@ -71,5 +97,11 @@ extra:
 not_in_nav: |
   llms.txt
   llms-full.txt
+  impressum.md
+  datenschutz.md
 
-copyright: MIT licensed. &copy; 2026 S&amp;S Connect.
+# Absolute links, because the footer is rendered on every page depth.
+copyright: >-
+  MIT licensed. &copy; 2026 S&amp;S Connect.
+  <a href="https://sundsoffice-tech.github.io/ai-audit-trail/impressum/">Impressum</a> |
+  <a href="https://sundsoffice-tech.github.io/ai-audit-trail/datenschutz/">Datenschutz</a>

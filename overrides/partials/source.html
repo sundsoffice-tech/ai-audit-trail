@@ -1,0 +1,17 @@
+{#-
+  Override of the theme partial (mkdocs-material 9.8.1, partials/source.html).
+
+  Only difference: the link carries no data-md-component="source". With that
+  attribute the theme script fetches stars, forks and the latest release from
+  api.github.com on every first page load, before the visitor has clicked
+  anything. The link to the repository itself stays as it was.
+-#}
+<a href="{{ config.repo_url }}" title="{{ lang.t('source') }}" class="md-source">
+  <div class="md-source__icon md-icon">
+    {% set icon = config.theme.icon.repo or "fontawesome/brands/git-alt" %}
+    {% include ".icons/" ~ icon ~ ".svg" %}
+  </div>
+  <div class="md-source__repository">
+    {{ config.repo_name }}
+  </div>
+</a>
